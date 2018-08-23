@@ -5,7 +5,11 @@ const OrbitControls = require("three-orbit-controls")(require("three"));
 OBJLoader(THREE);
 
 export class ThreeScene extends React.Component {
-
+    constructor(props) {
+        super(props);
+        this.rootRef = React.createRef();
+    }
+    
     componentDidMount() {
 
         const { width, height } = this.props;
@@ -32,7 +36,8 @@ export class ThreeScene extends React.Component {
         //RENDERER
         var renderer = new THREE.WebGLRenderer();
         renderer.setSize(width, height);
-        document.body.appendChild(renderer.domElement);
+
+        this.rootRef.current.appendChild(renderer.domElement);
 
         //OBJ LOADER
         var loader = new THREE.OBJLoader();
@@ -66,7 +71,7 @@ export class ThreeScene extends React.Component {
         const { width, height } = this.props;
 
         return (
-            <div></div>
+            <div ref={this.rootRef}></div>
         )
 
     }
