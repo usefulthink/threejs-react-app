@@ -1,38 +1,67 @@
-import React, { Component } from 'react';
-import './App.css';
-import * as THREE from 'three.js-master';
+import React, { Component } from "react";
+import "./App.css";
+const THREE = require('three');
+const OBJLoader = require('three-obj-loader');
+const OrbitControls = require("three-orbit-controls")(require("three"));
+OBJLoader(THREE);
 
 class App extends Component {
 
   componentDidMount() {
 
-    var scene = new THREE.Scene();
-    var camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+    const width = window.innerWidth;
+    const height = window.innerHeight;
 
+    //CREATE SCENE
+    var scene = new THREE.Scene();
+
+    //CAMERA
+    var camera = new THREE.OrthographicCamera(width / - 2, width / 2, height / 2, height / - 2, 1, 2000);
+    camera.lookAt(new THREE.Vector3(0, 0, 0));
+    camera.position.set(500, 100, 500);
+    camera.zoom = 10;
+    scene.add(camera);
+
+    //LIGHTS
+    var pointLight = new THREE.PointLight(0xffffff);
+    pointLight.position.y = 150;
+    pointLight.position.z = 200;
+    pointLight.position.x = 100;
+    scene.add(pointLight);
+
+    //RENDERER
     var renderer = new THREE.WebGLRenderer();
-    renderer.setSize(window.innerWidth / 1.5, window.innerHeight / 1.5);
+    renderer.setSize(width, height);
     document.body.appendChild(renderer.domElement);
 
-    var loader = new THREE.ObjectLoader();
-    loader.load('/3d/obj.OBJ', verLoad);
+    //OBJ LOADER
+    var loader = new THREE.OBJLoader();
+    loader.load('/3d/Era_Sofa_Wood.obj', verLoad);
 
-    function verLoad(geometry, materials) {
-      var mesh = new THREE.Mesh(geometry, materials);
-      scene.add(mesh);
-      mesh.position.z = -10;
+    function verLoad(obj) {
+      obj.position.z = -10;
+      scene.add(obj);
+      obj.scale.set = (2, 1, 1);
     }
 
-    camera.position.z = 5;
+    //CONTROLS
+    const controls = new OrbitControls(camera);
+    controls.enableZoom = true;
+    controls.zoomSpeed = 0;
+    controls.minDistance = 100;
+    controls.maxDistance = 500
+    controls.maxPolarAngle = Math.PI / 2;
 
+    //ANIMATION
     function animate() {
       requestAnimationFrame(animate);
       renderer.render(scene, camera);
-      //cube.rotation.x += 0.01;
-      //cube.rotation.y += 0.01;
     }
     animate();
 
   }
+
+
 
   render() {
     return (
